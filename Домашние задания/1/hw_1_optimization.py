@@ -57,7 +57,9 @@ def plot_trajectory(history, fit_axis=False, label=None, color="C1"):
     >> plot_trajectory(oracle.func, history['x'])
     """
     x_values, y_values = zip(*history)
-    plt.plot(x_values, y_values, ".-", linewidth=1.0, ms=5.0, alpha=1.0, c=color, label=label)
+    plt.plot(
+        x_values, y_values, ".-", linewidth=1.0, ms=5.0, alpha=1.0, c=color, label=label
+    )
     plt.legend()
 
     # Tries to adapt axis-ranges for the trajectory:
@@ -82,12 +84,16 @@ def generate_random_psd_matrix(dim: int, lmin: float, lmax: float):
     lambdas[0] = lmin
     lambdas[-1] = lmax
     A = np.diag(lambdas)
-    s = ortho_group(dim)
-    A = np.array([[lmin, 0], [0, lmax]])
+    s = ortho_group.rvs(dim)
     return np.dot(s, np.dot(A, s.T))
 
 
-def armijo(phi: Callable, der_phi: Callable, c: float = 1e-4, previous_alpha: Optional[float] = None):
+def armijo(
+    phi: Callable,
+    der_phi: Callable,
+    c: float = 1e-4,
+    previous_alpha: Optional[float] = None,
+):
     alpha = 1.0 or 2.0 * previous_alpha
 
     phi0 = phi(0)
@@ -96,4 +102,3 @@ def armijo(phi: Callable, der_phi: Callable, c: float = 1e-4, previous_alpha: Op
     while phi(alpha) > phi0 + c * alpha * der_phi0:
         alpha /= 2
     return alpha
-
